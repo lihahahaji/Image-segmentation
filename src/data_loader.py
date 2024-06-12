@@ -3,12 +3,14 @@ import numpy as np
 import h5py
 import torch
 from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
 
 class SynapseDataset(Dataset):
     def __init__(self, data_list, data_dir, transform=None):
         self.data_list = data_list
         self.data_dir = data_dir
         self.transform = transform
+        self.resize = transforms.Resize((512, 512))
 
     def __len__(self):
         return len(self.data_list)
