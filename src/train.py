@@ -1,15 +1,34 @@
 import torch.optim as optim
 import torch.nn as nn
+from Unet import UNet
+from data_loader import *
 
-
-# Hyperparameters
+# 超参数设置
 num_epochs = 10
 learning_rate = 0.001
 
-# Define loss function and optimizer
+# 新建一个Unet 对象
+model = UNet(in_channels=1, out_channels=1)
+
+# 定义损失函数和优化器
 criterion = nn.BCELoss()  # Binary Cross Entropy Loss for binary segmentation
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
+
+
+# 训练数据的文件列表
+train_list = load_data_list('data_set/Synapse/lists/lists_Synapse/train.txt')
+# 测试数据的文件列表
+test_list = load_data_list('data_set/Synapse/lists/lists_Synapse/test_vol.txt')
+
+# 加载训练和测试数据集
+train_dataset = SynapseDataset(train_list, 'data_set/Synapse/train_npz')
+test_dataset = SynapseDataset(test_list, 'data_set/Synapse/test_vol_h5')
+
+train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
+
+# 开始训练
 # Training loop
 for epoch in range(num_epochs):
     model.train()
