@@ -42,11 +42,11 @@ def load_data_list(file_path):
     return data_list
 
 # Example usage
-train_list = load_data_list('Synapse/lists/lists_Synapse/train.txt')
-test_list = load_data_list('Synapse/lists/lists_Synapse/test_vol.txt')
+# train_list = load_data_list('data_set/Synapse/lists/lists_Synapse/train.txt')
+# test_list = load_data_list('data_set/Synapse/lists/lists_Synapse/test_vol.txt')
 
-train_dataset = SynapseDataset(train_list, 'Synapse/train_npz')
-test_dataset = SynapseDataset(test_list, 'Synapse/test_vol_h5')
+# train_dataset = SynapseDataset(train_list, 'data_set/Synapse/train_npz')
+# test_dataset = SynapseDataset(test_list, 'data_set/Synapse/test_vol_h5')
 
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
+# train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+# test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
