@@ -14,8 +14,9 @@ class SynapseDataset(Dataset):
         return len(self.data_list)
 
     def __getitem__(self, idx):
-        file_name = self.data_list[idx]
+        file_name = self.data_list[idx]+''
         file_path = os.path.join(self.data_dir, file_name)
+        # print(file_path)
         if file_path.endswith('.npz'):
             data = np.load(file_path)
             image = data['image']
