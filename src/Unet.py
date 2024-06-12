@@ -22,5 +22,4 @@ class UNet(nn.Module):
         x = self.decoder(x)
         return x
 
-# Example usage
-model = UNet(in_channels=1, out_channels=1)
+
