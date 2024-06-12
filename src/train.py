@@ -3,6 +3,8 @@ import torch.nn as nn
 from Unet import UNet
 from data_loader import *
 
+import torch.nn.functional as F
+
 # 超参数设置
 num_epochs = 10
 learning_rate = 0.001
@@ -30,13 +32,26 @@ test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
 
 # 开始训练
 # Training loop
+print('开始训练')
 for epoch in range(num_epochs):
     model.train()
+    
     running_loss = 0.0
     for images, labels in train_loader:
         optimizer.zero_grad()
         outputs = model(images)
-        loss = criterion(outputs, labels.float())
+        
+        # print(print(outputs.shape))
+        # 将标签转换为浮点类型
+        labels = labels.float()
+
+        # 调整标签尺寸以匹配输出
+        labels_resized = F.interpolate(labels.unsqueeze(1), size=(256, 256), mode='bilinear', align_corners=False)
+
+        # 调整标签尺寸以匹配输出的形状 [8, 1, 256, 256]
+        labels_resized = labels_resized.squeeze(1).unsqueeze(1)
+        loss = criterion(outputs, labels_resized.float())
+        print(loss)
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
