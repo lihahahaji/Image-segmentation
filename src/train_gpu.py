@@ -43,7 +43,7 @@ if cuda_available:
     loss_fn = loss_fn.cuda()
 
 # 加载权重
-weights = torch.load('./pth/Unet_epoch-1.pth')
+weights = torch.load('./pth/Unet.pth')
 model.load_state_dict(weights)
 
 # 记录训练的次数
@@ -53,7 +53,7 @@ total_train_step = 0
 total_test_step = 0
 
 # 训练的轮数
-epoch = 10
+epoch = 100
 
 # Dice系数计算函数
 def dice_coeff(pred, target):
@@ -147,3 +147,14 @@ for i in range(epoch):
 
     torch.save(model.state_dict(), "./pth/Unet_epoch_{}.pth".format(i))
     print("模型已保存")
+
+    # 记录训练日志
+    with open('./logs/train.log', 'a') as log_file:
+        # 写入训练轮次信息
+        log_file.write(f'-----------------------------------------------')
+        log_file.write(f'第 {epoch+1} 轮训练：\n')
+        log_file.write(f'整体测试集上的Loss:{avg_test_loss}\n')
+        log_file.write(f'整体测试集上的Dice系数:{avg_dice}\n')
+        log_file.write(f'模型权重已保存到:./pth/Unet_epoch_{i}.pth\n\n')
+
+        
