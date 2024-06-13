@@ -32,6 +32,16 @@ test_dataset = SynapseDataset(test_list, 'data_set/Synapse/test_vol_h5')
 train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
 
+for images, labels in train_loader:
+    print(images.shape,labels.shape)
+
+    
+for images, labels in test_loader:
+    print(images.shape,labels.shape)
+
+
+
+
 # 开始训练
 print('开始训练')
 for epoch in range(num_epochs):
@@ -54,8 +64,11 @@ for epoch in range(num_epochs):
 
         # 调整标签尺寸以匹配输出的形状 [8, 1, 256, 256]
         labels_resized = labels_resized.squeeze(1).unsqueeze(1)
+        # outputs = torch.sigmoid(outputs)
+        labels_resized = torch.sigmoid(outputs)
         loss = criterion(outputs, labels_resized.float())
-        # print(loss)
+        print(loss.item())
+
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
