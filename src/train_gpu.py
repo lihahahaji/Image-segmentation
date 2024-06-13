@@ -5,6 +5,7 @@ from net_work import *
 from data_loader import *
 import torch.nn.functional as F
 from tqdm import tqdm 
+from datetime import datetime
 
 # use gpu
 cuda_available = True
@@ -151,10 +152,13 @@ for i in range(epoch):
     # 记录训练日志
     with open('./logs/train.log', 'a') as log_file:
         # 写入训练轮次信息
-        log_file.write(f'-----------------------------------------------')
-        log_file.write(f'第 {epoch+1} 轮训练：\n')
-        log_file.write(f'整体测试集上的Loss:{avg_test_loss}\n')
-        log_file.write(f'整体测试集上的Dice系数:{avg_dice}\n')
-        log_file.write(f'模型权重已保存到:./pth/Unet_epoch_{i}.pth\n\n')
+        log_file.write(f'------------第 {i+1} 轮训练------------\n')
+        log_file.write(f'整体测试集上的Loss: {avg_test_loss}\n')
+        log_file.write(f'整体测试集上的Dice系数: {avg_dice}\n')
+        log_file.write(f'模型权重已保存到: ./pth/Unet_epoch_{i}.pth\n')
+
+        current_time = datetime.now()
+        formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+        log_file.write(formatted_time,'\n\n')
 
         
