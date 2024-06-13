@@ -10,7 +10,7 @@ class SynapseDataset(Dataset):
         self.data_list = data_list
         self.data_dir = data_dir
         self.transform = transform
-        self.resize = transforms.Resize((512, 512))
+        # self.resize = transforms.Resize((512, 512))
 
     def __len__(self):
         return len(self.data_list)
