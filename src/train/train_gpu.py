@@ -157,7 +157,6 @@ for i in range(epoch):
         log_file.write(f'整体测试集上的Loss: {avg_test_loss}\n')
         log_file.write(f'整体测试集上的Dice系数: {avg_dice}\n')
         log_file.write(f'模型权重已保存到: ./pth/Unet_epoch_{i}.pth\n')
-
         current_time = datetime.now()
         formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
         log_file.write(f'{formatted_time}\n\n')
