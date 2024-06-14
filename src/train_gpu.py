@@ -159,6 +159,6 @@ for i in range(epoch):
 
         current_time = datetime.now()
         formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
-        log_file.write(formatted_time,'\n\n')
+        log_file.write(f'{formatted_time}\n\n')
 
         
