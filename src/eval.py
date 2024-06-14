@@ -55,30 +55,7 @@ def calculate_iou(pred, target, threshold=0.5):
     iou = intersection / (union + 1e-6)  # 避免除以零
     return iou.mean().item()
 
-# 训练函数
-def train_epoch(model, dataloader, criterion, optimizer, device):
-    model.train()
-    running_loss = 0.0
-    running_dice = 0.0
-    running_iou = 0.0
-    for inputs, labels in tqdm(dataloader):
-        inputs, labels = inputs.to(device), labels.to(device)
 
-        # 预处理标签
-        labels = torch.clamp(labels, 0, 1)  # 将标签值限制在[0, 1]范围内
-
-        optimizer.zero_grad()
-        outputs = model(inputs)
-        
-        loss = criterion(outputs, labels)
-        
-        loss.backward()
-        optimizer.step()
-
-        running_loss += loss.item()
-        running_dice += calculate_dice(outputs, labels)
-        running_iou += calculate_iou(outputs, labels)
-    return running_loss / len(dataloader), running_dice / len(dataloader), running_iou / len(dataloader)
 
 # 验证函数
 def validate_epoch(model, dataloader, criterion, device):
@@ -102,27 +79,6 @@ def validate_epoch(model, dataloader, criterion, device):
 
 
 
-# 训练过程
-num_epochs = 50
-best_loss = float('inf')
-
-for epoch in range(num_epochs):
-    print(f"Epoch {epoch+1}/{num_epochs}")
-    train_loss, train_dice, train_iou = train_epoch(model, train_loader, criterion, optimizer, device)
-    val_loss, val_dice, val_iou = validate_epoch(model, test_loader, criterion, device)
-
-    print(f"Train Loss: {train_loss:.4f}, Train Dice: {train_dice:.4f}, Train IoU: {train_iou:.4f}")
-    print(f"Validation Loss: {val_loss:.4f}, Validation Dice: {val_dice:.4f}, Validation IoU: {val_iou:.4f}")
-
-    # 保存最好的模型
-    if val_loss < best_loss:
-        best_loss = val_loss
-        torch.save(model.state_dict(), 'best_model.pth')
-        print("Model saved!")
-
-print("Training complete!")
-
-
-
-# val_loss, val_dice, val_iou = validate_epoch(model, test_loader, criterion, device)
-# print(f"Validation Loss: {val_loss:.4f}, Validation Dice: {val_dice:.4f}, Validation IoU: {val_iou:.4f}")
+# 验证模型
+val_loss, val_dice, val_iou = validate_epoch(model, test_loader, criterion, device)
+print(f"Validation Loss: {val_loss:.4f}, Validation Dice: {val_dice:.4f}, Validation IoU: {val_iou:.4f}")

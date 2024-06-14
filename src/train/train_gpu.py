@@ -2,10 +2,11 @@ import torch.optim as optim
 import torch.nn as nn
 # from Unet import UNet
 from net_work import *
-from data_loader import *
+from data_set import *
 import torch.nn.functional as F
 from tqdm import tqdm 
 from datetime import datetime
+from models.u_net import UNet
 
 # use gpu
 cuda_available = True
@@ -28,11 +29,11 @@ test_data_size = len(test_dataset)
 print("训练数据集的长度为：{}".format(train_data_size))
 print("测试数据集的长度为：{}".format(test_data_size))
 
-train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=3, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=3, shuffle=False)
 
 # 创建模型
-model = AttU_Net(1,1)
+model = UNet(1,1)
 
 
 # 定义损失函数和优化器
@@ -146,7 +147,7 @@ for i in range(epoch):
 
     total_test_step += 1
 
-    torch.save(model.state_dict(), "./pth/Att_Unet_epoch_{}.pth".format(i))
+    torch.save(model.state_dict(), "./pth/Unet_epoch_{}.pth".format(i))
     print("模型已保存")
 
     # 记录训练日志

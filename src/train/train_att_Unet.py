@@ -2,16 +2,16 @@ import torch.optim as optim
 import torch.nn as nn
 # from Unet import UNet
 from net_work import *
-from data_loader import *
+from data_set import *
 import torch.nn.functional as F
 from tqdm import tqdm 
 from datetime import datetime
-
+from models.u_net import UNet
 # use gpu
 cuda_available = True
 
 # 超参数设置
-learning_rate = 0.01
+learning_rate = 1e-4
 
 # 训练数据的文件列表
 train_list = load_data_list('data_set/Synapse/lists/lists_Synapse/train.txt')
@@ -28,15 +28,15 @@ test_data_size = len(test_dataset)
 print("训练数据集的长度为：{}".format(train_data_size))
 print("测试数据集的长度为：{}".format(test_data_size))
 
-train_loader = DataLoader(train_dataset, batch_size=3, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=3, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 # 创建模型
-model = U_Net(1,1)
+model = UNet(1,1)
 
 
 # 定义损失函数和优化器
-loss_fn = nn.BCELoss()  # Binary Cross Entropy Loss for binary segmentation
+loss_fn = nn.BCEWithLogitsLoss()  # Binary Cross Entropy Loss for binary segmentation
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 if cuda_available:
@@ -44,8 +44,8 @@ if cuda_available:
     loss_fn = loss_fn.cuda()
 
 # 加载权重
-weights = torch.load('./pth/Unet.pth')
-model.load_state_dict(weights)
+# weights = torch.load('./pth/Unet.pth')
+# model.load_state_dict(weights)
 
 # 记录训练的次数
 total_train_step = 0
@@ -78,7 +78,9 @@ for i in range(epoch):
     print("--------第 {} 轮训练开始--------".format(i+1))
     model.train()
     total_train_step = 0 
-
+    total_train_loss = 0
+    total_train_dice = 0
+    total_train_iou = 0
     for data in tqdm(train_loader, desc="Training"): 
         images,labels = data
         if cuda_available:
@@ -89,21 +91,31 @@ for i in range(epoch):
 
         outputs = model(images)
 
-        labels_resized = torch.sigmoid(labels)
-        outputs = torch.sigmoid(outputs)
-        loss = loss_fn(outputs,labels_resized)
+        labels = torch.clamp(labels, 0, 1)
+        loss = loss_fn(outputs,labels)
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
         total_train_step = total_train_step + 1
-        # print("训练次数：{}, loss：{}".format(total_train_step , loss.item()))
+        total_train_loss +=  loss.item()
 
-        # if(total_train_step%100 ==0 ):
-        #     print("训练次数：{}, loss：{}".format(total_train_step , loss.item()))
+        # 计算Dice系数和IoU
+        dice = dice_coeff(outputs, labels)
+        total_train_dice += dice.item()
 
-        # break
+        iou_score = iou(outputs, labels)
+        total_train_iou += iou_score.item()
+
+    
+    avg_train_loss = total_train_loss / len(train_loader)
+    avg_train_dice = total_train_dice / len(train_loader)
+    avg_train_iou = total_train_iou / len(train_loader)
+
+    print("整体训练集上的Loss:{}".format(avg_train_loss))
+    print("整体训练集上的Dice系数:{}".format(avg_train_dice))
+    print("整体训练集上的IoU:{}".format(avg_train_iou))
 
     # 开始测试模型
     model.eval()
@@ -123,30 +135,29 @@ for i in range(epoch):
             outputs = model(images)
             # labels_resized = labels.squeeze(1).unsqueeze(1)
 
-            labels_resized = torch.sigmoid(labels)
-            outputs = torch.sigmoid(outputs)
+            labels = torch.clamp(labels, 0, 1)
 
-            loss = loss_fn(outputs,labels_resized)
+            loss = loss_fn(outputs,labels)
             total_test_loss += loss.item()
 
             # 计算Dice系数和IoU
-            dice = dice_coeff(outputs, labels_resized)
+            dice = dice_coeff(outputs, labels)
             total_dice += dice.item()
 
-            # iou_score = iou(outputs, labels_resized)
-            # total_iou += iou_score.item()
+            iou_score = iou(outputs, labels)
+            total_iou += iou_score.item()
 
     avg_test_loss = total_test_loss / len(test_loader)
     avg_dice = total_dice / len(test_loader)
-    # avg_iou = total_iou / len(test_loader)
+    avg_iou = total_iou / len(test_loader)
 
     print("整体测试集上的Loss:{}".format(avg_test_loss))
     print("整体测试集上的Dice系数:{}".format(avg_dice))
-    # print("整体测试集上的IoU:{}".format(avg_iou))
+    print("整体测试集上的IoU:{}".format(avg_iou))
 
     total_test_step += 1
 
-    torch.save(model.state_dict(), "./pth/Unet_epoch_{}.pth".format(i))
+    torch.save(model.state_dict(), "./pth/Att_Unet_epoch_{}.pth".format(i))
     print("模型已保存")
 
     # 记录训练日志
