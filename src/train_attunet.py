@@ -24,12 +24,12 @@ print("训练数据集的长度为：{}".format(train_data_size))
 print("测试数据集的长度为：{}".format(test_data_size))
 
 # 创建数据加载器
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
 # 定义模型
-model = AttentionUNet(1, 1)
-model_name = 'AttentionUNet'
+model = AttU_Net(1,1)
+model_name = 'AttU_Net'
 # 加载模型
 # weights = torch.load('./pth/best_model.pth')
 # model.load_state_dict(weights)
@@ -81,7 +81,7 @@ def visualization(num_epochs,train_losses,val_losses,train_dices,val_dices,train
     plt.title('IoU')
     plt.legend()
 
-    plt.savefig(f'./train_result_visualization/{model_name}training_metrics_epochs_{num_epochs}.png')
+    plt.savefig(f'./train_result_visualization/{model_name}/{model_name}_training_metrics_epochs_{num_epochs}.png')
     
 def train_log(epoch_num,train_loss,train_dice,train_iou,val_loss,val_dice,val_iou,log_file_name):
     with open(f'./logs/{log_file_name}.log', 'a') as log_file:
@@ -148,6 +148,7 @@ def validate_epoch(model, dataloader, criterion, device):
 # 训练过程
 num_epochs = 30
 best_loss = float('inf')
+best_val_dice = 0 
 
 train_losses = []
 val_losses = []
@@ -191,6 +192,11 @@ for epoch in range(num_epochs):
         best_loss = val_loss
         torch.save(model.state_dict(), f'./pth/{model_name}_best_model_epoch_{epoch+1}.pth')
         print("Model saved!")
+    elif best_val_dice < val_dice :
+        best_val_dice = val_dice
+        torch.save(model.state_dict(), f'./pth/{model_name}/{model_name}_best_val_dice__model_epoch_{epoch+1}.pth')
+        print("Model saved!")
+
 
 print("Training complete!")
 
