@@ -29,7 +29,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 # 定义模型
 model = UNet(1, 1)
-
+model_name = 'UNet'
 # 加载模型
 # weights = torch.load('./pth/best_model.pth')
 # model.load_state_dict(weights)
@@ -81,8 +81,7 @@ def visualization(num_epochs,train_losses,val_losses,train_dices,val_dices,train
     plt.title('IoU')
     plt.legend()
 
-    plt.savefig(f'./train_result_visualization/training_metrics_epochs_{num_epochs}.png')
-    # plt.show()
+    plt.savefig(f'./train_result_visualization/{model_name}training_metrics_epochs_{num_epochs}.png')
     
 def train_log(epoch_num,train_loss,train_dice,train_iou,val_loss,val_dice,val_iou,log_file_name):
     with open(f'./logs/{log_file_name}.log', 'a') as log_file:
@@ -147,7 +146,7 @@ def validate_epoch(model, dataloader, criterion, device):
     return running_loss / len(dataloader), running_dice / len(dataloader), running_iou / len(dataloader)
 
 # 训练过程
-num_epochs = 30
+num_epochs = 100
 best_loss = float('inf')
 
 train_losses = []
@@ -185,12 +184,12 @@ for epoch in range(num_epochs):
     visualization(epoch+1,train_losses,val_losses,train_dices,val_dices,train_ious,val_ious)
 
     # log 
-    train_log(epoch,train_loss, train_dice, train_iou, val_loss, val_dice, val_iou,'Unet_train_6_14')
+    train_log(epoch,train_loss, train_dice, train_iou, val_loss, val_dice, val_iou,f'{model_name}_train_6_14')
     
     # 保存最好的模型
     if val_loss < best_loss:
         best_loss = val_loss
-        torch.save(model.state_dict(), f'./pth/best_model_epoch_{epoch+1}.pth')
+        torch.save(model.state_dict(), f'./pth/{model_name}_best_model_epoch_{epoch+1}.pth')
         print("Model saved!")
 
 print("Training complete!")
