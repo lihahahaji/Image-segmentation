@@ -146,7 +146,7 @@ def validate_epoch(model, dataloader, criterion, device):
     return running_loss / len(dataloader), running_dice / len(dataloader), running_iou / len(dataloader)
 
 # 训练过程
-num_epochs = 30
+num_epochs = 100
 best_loss = float('inf')
 best_val_dice = 0 
 
