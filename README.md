@@ -1,6 +1,35 @@
 # Image-segmentation
 人工智能物联网大作业
 
+## 项目结构说明
+```
+Image-segmentation
+├─ .gitignore
+├─ doc_src -- 实验报告latex源码
+├─ logs -- 模型训练日志
+│  ├─ AttU_Net_train_6_14.log
+│  ├─ FCN_train.log
+│  └─ UNet_train_6_14.log
+├─ README.md
+├─ requirements.txt
+├─ src
+│  ├─ eval.py -- 模型测试
+│  ├─ models -- 模型源码
+│  │  ├─ att_unet.py
+│  │  ├─ fcn.py
+│  │  └─ u_net.py
+│  ├─ test.py
+│  └─ train -- 模型训练代码
+│     ├─ train_attunet.py
+│     ├─ train_fcn.py
+│     └─ train_unet.py
+└─ train_result_visualization -- 实验结果可视化
+   ├─ AttU_Net
+   ├─ FCN
+   └─ UNet
+```
+
+
 ## 数据集说明
 Synapse数据集
 
@@ -53,3 +82,16 @@ Synapse/
 这些文件是HDF5格式，可以存储多种数据类型，适合存储大型、多维数据。通常包含两个数据集：
 - `image`：一个三维数组，表示整个医学图像。
 - `label`：一个三维数组，表示对应的分割标签。
+
+
+## 实验结果
+### FCN
+
+![image-20240616175051319](train_result_visualization\FCN\FCNtraining_metrics_epochs_100.png)
+
+### U-Net
+![image-20240616175051319](train_result_visualization\UNet\UNettraining_metrics_epochs_100.png)
+
+### Attention U-Net
+
+![image-20240616175051319](train_result_visualization\AttU_Net\AttU_Net_training_metrics_epochs_100.png)
