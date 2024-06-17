@@ -87,11 +87,11 @@ Synapse/
 ## 实验结果
 ### FCN
 
-![image-20240616175051319](train_result_visualization\FCN\FCNtraining_metrics_epochs_100.png)
+![image-20240616175051319](./train_result_visualization\FCN\FCNtraining_metrics_epochs_100.png)
 
 ### U-Net
-![image-20240616175051319](train_result_visualization\UNet\UNettraining_metrics_epochs_100.png)
+![image-20240616175051319](./train_result_visualization\UNet\UNettraining_metrics_epochs_100.png)
 
 ### Attention U-Net
 
-![image-20240616175051319](train_result_visualization\AttU_Net\AttU_Net_training_metrics_epochs_100.png)
+![image-20240616175051319](./train_result_visualization\AttU_Net\AttU_Net_training_metrics_epochs_100.png)
